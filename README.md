@@ -4,7 +4,9 @@ Inspired by Spring
 
 ## How to use
 
-Create `index.ts` file with content:
+Create `./config/config.json` file with empty configuration `{}`. It's important step.
+
+Create `./src/index.ts` file with content:
 
 ```typescript
 // file: index.ts
@@ -174,3 +176,39 @@ class Application {
     }
 }
 ```
+
+## Components scan
+Built-in configurations in `config/config.json` contains components scan rules:
+
+```json
+{
+  "metafoks": {
+    "scanner": {
+      "service": "./src/**/*.service.ts",
+      "loader": "./src/**/*.loader.ts",
+      "component": "./src/**/*.component.ts"
+    }
+  }
+}
+```
+
+## Logging
+Built-in configurations in `config/config.json` contains some factory logging properties:
+
+```json
+{
+  "metafoks": {
+    "logger": {
+      "level": {
+        "app": "INFO",
+        "system": "INFO"
+      }
+    }
+  }
+}
+```
+
+- `system` logs - logs about application
+- `app` logs - default logs created with `createLogger` function
+
+Supported logging levels: trace, debug, info, warn, error.
