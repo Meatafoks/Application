@@ -1,7 +1,5 @@
 # Metafoks Application
 
-[[Русский язык](/locale/ru.md) | [中文语言](/locale/ch.md)]
-
 Inspired by Spring, the Metafoks Application implements reverse dependency injection.
 
 - [Installation](#installation)

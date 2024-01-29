@@ -1,52 +1,50 @@
-# Metafoks Application
+# Metafoks 应用
 
-[[Русский язык](/locale/ru.md) | [中文语言](/locale/ch.md)]
+受 Spring 启发，Metafoks 应用实现了反向依赖注入。
 
-Inspired by Spring, the Metafoks Application implements reverse dependency injection.
+- [安装](#安装)
+- [项目架构](#项目架构)
+- [如何使用（指南）](#如何使用指南)
+    - [第一个服务](#第一个服务)
+    - [组件](#组件)
+    - [加载器](#加载器)
+    - [扩展](#扩展)
+- [组件扫描](#组件扫描)
+- [日志记录](#日志记录)
 
-- [Installation](#installation)
-- [Project Architecture](#project-architecture)
-- [How to Use (Guide)](#how-to-use-guide)
-    - [First Service](#first-service)
-    - [Components](#components)
-    - [Loaders](#loaders)
-    - [Extensions](#extensions)
-- [Component Scanning](#component-scanning)
-- [Logging](#logging)
-
-## Installation
-Install the Metafoks CLI globally:
+## 安装
+全局安装 Metafoks CLI：
 ```shell
 npm i -g @metafoks/cli
 ```
 
-Create a project directory, for example, `project`:
+创建一个项目目录，例如 `project`：
 ```shell
 mkdir project
 ```
 
-Navigate to the project directory:
+进入项目目录：
 ```shell
 cd project
 ```
 
-Run the project initialization script:
+运行项目初始化脚本：
 ```shell
 metafoks init
 ```
 
-## Project Architecture
-- `/config` - directory with configurations
-- `/config/config.json` - application configuration file
-- `/src` - main project files
-- `/src/index.ts` - entry point of the application
-- `/package.json` - main module file
-- `/esbuild.config.js` - project build configuration
-- `/tsconfig.json` - main TypeScript configuration file
+## 项目架构
+- `/config` - 包含配置的目录
+- `/config/config.json` - 应用配置文件
+- `/src` - 项目的主要文件
+- `/src/index.ts` - 应用的入口点
+- `/package.json` - 主模块文件
+- `/esbuild.config.js` - 项目构建配置
+- `/tsconfig.json` - TypeScript 的主要配置文件
 
-## How to Use (Guide)
-### First Service
-In the project files directory, there is an entry point file `index.ts`. Let's enhance it:
+## 如何使用（指南）
+### 第一个服务
+在项目文件目录中，有一个入口点文件 `index.ts`。让我们增强它：
 ```typescript
 // file: index.ts
 
@@ -60,14 +58,14 @@ class Application {
     constructor(private deps: { config: any, myService: MyService }) {}
 
     start() {
-        // Start point of your application
+        // 应用的起始点
         this.logger.info(this.deps.config);
         this.deps.myService.startService();
     }
 }
 ```
 
-Now let's create our first service. Note that you need to use the `default` keyword when exporting the module.
+现在让我们创建我们的第一个服务。请注意，导出模块时需要使用 `default` 关键字。
 ```typescript
 // file: my.service.ts
 
@@ -77,13 +75,13 @@ export default class MyService {
     constructor(private deps: { config: any }) {}
 
     startService() {
-        this.logger.info("Service has been started!");
+        this.logger.info("服务已启动！");
     }
 }
 ```
 
-## Components
-If you want to create a component that is not a service, use files with the `*.component.ts` extension. The component should be exported as `default`.
+## 组件
+如果要创建不是服务的组件，请使用扩展名为 `*.component.ts` 的文件。组件应作为 `default` 导出。
 ```typescript
 // file: db.component.ts
 
@@ -91,7 +89,7 @@ export default class DbComponent {
 }
 ```
 
-But what if you want to register your component using a shorter name? There's a solution!
+但如果你想使用更短的名称注册组件怎么办？有一个解决方案！
 ```typescript
 // file: db.component.ts
 
@@ -102,7 +100,7 @@ export default class DbComponent {
 }
 ```
 
-Now you can use the name `db`.
+现在你可以使用名称 `db`。
 ```typescript
 // file: index.ts
 
@@ -122,8 +120,8 @@ class Application {
 }
 ```
 
-## Loaders
-The Metafoks application has `loaders` - functions that run once and live as singletons, but they also have context. Let's create a `telegraf.loader.ts` file. Note that the loader always has the `*.loader.ts` format.
+## 加载器
+Metafoks 应用有 `加载器` - 一次运行的函数，作为单例存在，但它们也具有上下文。让我们创建一个 `telegraf.loader.ts` 文件。请注意，加载器的格式始终为 `*.loader.ts`。
 ```typescript
 // file: telegraf.loader.ts
 
@@ -132,7 +130,7 @@ export default function (deps: { config: any }) {
 }
 ```
 
-Now we can also create a loader for `Telegram`.
+现在我们还可以为 `Telegram` 创建一个加载器。
 ```typescript
 // file: telegram.loader.ts
 
@@ -141,7 +139,7 @@ export default function (deps: { telegraf: Telegraf }) {
 }
 ```
 
-Great! To get loader results from the context, you need to use the loader file name without `.loader`.
+太好了！要从上下文中获取加载器的结果，需要使用加载器文件名而无需 `.loader`。
 ```typescript
 // file: bot.component.ts
 
@@ -153,16 +151,16 @@ export default class BotComponent {
 }
 ```
 
-### Extensions
+### 扩展
 ```typescript
 import { MetafoksContext } from "@metafoks/app";
 
 MetafoksContext.getContext()
 ```
 
-`getContext()` returns the application context.
+`getContext()` 返回应用上下文。
 
-Simple example:
+简单的例子：
 ```typescript
 // module: @custom/tg
 // file: index.ts
@@ -200,8 +198,8 @@ class Application {
 }
 ```
 
-## Component Scanning
-In the built-in config `config/config.json`, there are component scanning rules:
+## 组件扫描
+在内置配置 `config/config.json` 中，有组件扫描规则：
 ```json
 {
   "metafoks": {
@@ -214,8 +212,8 @@ In the built-in config `config/config.json`, there are component scanning rules:
 }
 ```
 
-## Logging
-In the built-in config `config/config.json`, there are some settings for logging:
+## 日志记录
+在内置配置 `config/config.json` 中，有一些日志记录的设置：
 ```json
 {
   "metafoks": {
@@ -228,7 +226,7 @@ In the built-in config `config/config.json`, there are some settings for logging
   }
 }
 ```
-- `system` - system logs of the application
-- `app` - logs created by the `createLogger` function
+- `system` - 应用程序的系统日志
+- `app` - 由 `createLogger` 函数创建的日志
 
-Supported log types: trace, debug, info, warn, error.
+支持的日志类型：trace、debug、info、warn、error。

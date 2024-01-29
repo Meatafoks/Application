@@ -1,6 +1,11 @@
 *
 !src/
 !src/**/*
+
+!locale/
+!locale/**/*
+
+!.npmignore
 !.gitignore
 !package.json
 !README.md
