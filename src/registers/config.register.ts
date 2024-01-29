@@ -30,5 +30,9 @@ export function metafoksAppConfigLoader(props: {}) {
 }
 
 export function registerMetafoksAppConfigLoader(container: MetafoksContext) {
-    container.addFunction('config', metafoksAppConfigLoader);
+    if (container.inlineConfig) {
+        container.addValue('config', container.inlineConfig);
+    } else {
+        container.addFunction('config', metafoksAppConfigLoader);
+    }
 }

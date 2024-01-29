@@ -1,4 +1,4 @@
-import { asClass, asFunction, AwilixContainer, createContainer, InjectionMode } from 'awilix';
+import { asClass, asFunction, asValue, AwilixContainer, createContainer, InjectionMode } from 'awilix';
 import { FunctionReturning } from 'awilix/lib/container';
 import { Constructor } from 'awilix/lib/resolvers';
 import { MetafoksAppConfig } from '../config';
@@ -12,6 +12,7 @@ export class MetafoksContext {
     }
 
     private readonly container: AwilixContainer;
+    public inlineConfig?: MetafoksAppConfig = undefined;
 
     public constructor() {
         this.container = createContainer({
@@ -26,6 +27,10 @@ export class MetafoksContext {
 
     public addFunction<T>(name: string, target: FunctionReturning<T>) {
         this.getContainer().register(name, asFunction(target).singleton());
+    }
+
+    public addValue<T>(name: string, target: T) {
+        this.getContainer().register(name, asValue(target));
     }
 
     public addClass<T>(name: string, target: Constructor<T>) {
