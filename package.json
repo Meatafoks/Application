@@ -1,0 +1,37 @@
+{
+  "name": "@metafoks/app",
+  "version": "1.0.6",
+  "description": "Metafoks application main package",
+  "main": "lib/index.js",
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc",
+    "format": "prettier --write \"src/**/*.(js|ts)\"",
+    "lint": "eslint src --fix --ext .js,.ts"
+  },
+  "author": "Yakov Foks <notafoks@yandex.ru>",
+  "license": "ISC",
+  "dependencies": {
+    "awilix": "10.0.1",
+    "log4js": "6.9.1",
+    "typescript": "5.3.3"
+  },
+  "devDependencies": {
+    "@metafoks/eslint-config": "1.0.0",
+    "@metafoks/prettier": "1.0.0",
+    "@types/node": "^20.11.10",
+    "eslint": "8.56.0",
+    "prettier": "3.2.4"
+  },
+  "prettier": "@metafoks/prettier",
+  "eslintConfig": {
+    "extends": [
+      "@metafoks/eslint-config"
+    ]
+  }
+}
