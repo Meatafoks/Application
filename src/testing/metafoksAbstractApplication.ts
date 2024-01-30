@@ -15,6 +15,10 @@ export class MetafoksAbstractApplication {
         this.context.addValue(name, mock);
     }
 
+    public async addExtension(extension: (context: MetafoksContext) => void | Promise<void>) {
+        await extension(this.getContext());
+    }
+
     public getContext() {
         return this.context;
     }
