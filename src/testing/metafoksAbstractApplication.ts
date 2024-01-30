@@ -1,6 +1,7 @@
 import { MetafoksContext } from '../context';
 import { MetafoksAppConfig } from '../config';
 import { RunMetafoksApplicationOptions } from '../context/runMetafoksApplication';
+import { registerLoggerFactory } from '../registers/logger.register';
 
 export class MetafoksAbstractApplication {
     public static async createInstant<TConfig = any>(
@@ -8,6 +9,8 @@ export class MetafoksAbstractApplication {
     ) {
         const context = new MetafoksContext();
         context.addValue('config', props.config);
+
+        registerLoggerFactory(context, { disableFileWriting: true });
 
         for (const extension of props.with ?? []) {
             await extension(context);
