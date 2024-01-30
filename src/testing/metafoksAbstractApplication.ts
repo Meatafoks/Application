@@ -1,25 +1,32 @@
 import { MetafoksContext } from '../context';
 import { MetafoksAppConfig } from '../config';
+import { RunMetafoksApplicationOptions } from '../context/runMetafoksApplication';
 
 export class MetafoksAbstractApplication {
-    public static createInstant<TConfig = any>(props: { config: TConfig & MetafoksAppConfig }) {
+    public static async createInstant<TConfig = any>(
+        props: { config?: TConfig & MetafoksAppConfig } & RunMetafoksApplicationOptions = {},
+    ) {
         const context = new MetafoksContext();
         context.addValue('config', props.config);
+
+        for (const extension of props.with ?? []) {
+            await extension(context);
+        }
 
         return new MetafoksAbstractApplication(context);
     }
 
-    private constructor(private context: MetafoksContext) {}
-
-    public mock<TMock = any>(name: string, mock: TMock) {
-        this.context.addValue(name, mock);
-    }
-
-    public async addExtension(extension: (context: MetafoksContext) => void | Promise<void>) {
-        await extension(this.getContext());
-    }
+    private constructor(private readonly context: MetafoksContext) {}
 
     public getContext() {
         return this.context;
+    }
+
+    public mock<TMock = any>(name: string, mock: TMock) {
+        this.getContext().addValue(name, mock);
+    }
+
+    public resolve<T = any>(name: string) {
+        return this.getContext().resolve<T>(name);
     }
 }

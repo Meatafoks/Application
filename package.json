@@ -1,6 +1,6 @@
 {
   "name": "@metafoks/app",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "Metafoks application main package",
   "main": "lib/index.js",
   "files": [
