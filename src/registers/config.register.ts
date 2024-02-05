@@ -9,7 +9,7 @@ import { MetafoksContext } from '../context';
 const logger = getLogger('MetafoksAppConfigLoader');
 logger.level = 'WARN';
 
-export function metafoksAppConfigLoader(props: {}) {
+export function metafoksAppConfigLoader(props: { profile?: string }) {
     logger.debug('loading metafoks app configuration file');
 
     const configPath = path.resolve('config/config.json');

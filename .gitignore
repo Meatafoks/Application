@@ -2,6 +2,9 @@
 !src/
 !src/**/*
 
+!test/
+!test/**/*
+
 !locale/
 !locale/**/*
 

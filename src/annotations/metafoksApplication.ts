@@ -1,9 +1,8 @@
 import { runMetafoksApplication } from '../context';
-import { RunMetafoksApplicationOptions } from '../context/runMetafoksApplication';
-import { LoggerFactory } from '../utils';
+import { ApplicationLoaderProps } from '../loaders/app.loader';
 
-export function MetafoksApplication(options: RunMetafoksApplicationOptions = {}) {
+export function MetafoksApplication(options: ApplicationLoaderProps = {}) {
     return (target: any) => {
-        runMetafoksApplication(target, options).then().catch(LoggerFactory.app.error);
+        runMetafoksApplication(target, options);
     };
 }

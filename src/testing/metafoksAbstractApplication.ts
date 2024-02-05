@@ -1,11 +1,13 @@
 import { MetafoksContext } from '../context';
 import { MetafoksAppConfig } from '../config';
-import { RunMetafoksApplicationOptions } from '../context/runMetafoksApplication';
 import { registerLoggerFactory } from '../registers/logger.register';
 
+/**
+ * @deprecated use createAbstractApplication func
+ */
 export class MetafoksAbstractApplication {
     public static async createInstant<TConfig = any>(
-        props: { config?: TConfig & MetafoksAppConfig } & RunMetafoksApplicationOptions = {},
+        props: { config?: TConfig & MetafoksAppConfig } & any = {},
     ) {
         const context = new MetafoksContext();
         context.addValue('config', props.config);

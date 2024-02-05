@@ -2,15 +2,21 @@ import { MetafoksAppConfig } from '../config';
 import { LoggerFactory } from '../utils';
 import { MetafoksContext } from '../context';
 
-export function registerLoggerFactory(
-    context: MetafoksContext,
-    options: { disableFileWriting?: boolean } = {},
-) {
+export interface LoggerFactoryProps {
+    level?: {
+        app?: string;
+        system?: string;
+    };
+    disableFileWriting?: boolean;
+}
+
+export function registerLoggerFactory(context: MetafoksContext, props: LoggerFactoryProps = {}) {
     const config = context.resolve('config') as MetafoksAppConfig;
-    const level = config.metafoks?.logger?.level?.app ?? 'INFO';
+    const level = props.level?.app ?? config.metafoks?.logger?.level?.app ?? 'INFO';
 
     LoggerFactory.app.level = level;
-    if (!options.disableFileWriting) {
+
+    if (!props.disableFileWriting) {
         LoggerFactory.configure({
             appenders: {
                 out: { type: 'stdout' },

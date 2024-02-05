@@ -1,0 +1,8 @@
+export type MetafoksEnvKey =
+    | 'CONFIG_PROFILE'
+    | 'CONFIG_LOADER_LOGS_LEVEL'
+    | 'CONFIG_PATH'
+    | 'SCANNER_SERVICE_PATTERN'
+    | 'SCANNER_COMPONENT_PATTERN'
+    | 'SCANNER_LOADER_PATTERN'
+    | string;
