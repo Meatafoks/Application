@@ -21,11 +21,11 @@ export function extensionsLoader(context: MetafoksContext, props: ExtensionsLoad
                     logger.info(`completed autorun of extension with identifier=${manifest.identifier}`);
                     context.trackEvent('extensionLoaded', manifest.identifier);
                 })
-                .catch(reason =>
+                .catch(reason => {
                     logger.error(
-                        `error in autorun function of extension with identifier=${manifest.identifier}: ${JSON.stringify(reason)}`,
-                    ),
-                );
+                        `error in autorun function of extension with identifier=${manifest.identifier}: ${reason}`,
+                    );
+                });
         } else {
             context.trackEvent('extensionLoaded', manifest.identifier);
         }
