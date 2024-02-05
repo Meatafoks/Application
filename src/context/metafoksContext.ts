@@ -12,7 +12,6 @@ import { Constructor } from 'awilix/lib/resolvers';
 import { MetafoksAppConfig } from '../config';
 import { MetafoksEnvKey } from './env';
 import { ContextEventName } from '../events';
-import { LoggerFactory } from '../utils';
 
 export class MetafoksContext {
     private static instance?: MetafoksContext = undefined;

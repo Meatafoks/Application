@@ -56,5 +56,6 @@ export function registerConfigLoader<TConfig = any>(
     context: MetafoksContext,
     props: ConfigLoaderProps<TConfig> = {},
 ) {
-    context.addFunction('config', () => merge(configLoader(props), context.inlineConfig ?? {}));
+    const overrides = merge(props.overrides ?? {}, context.inlineConfig ?? {});
+    context.addFunction('config', configLoader({ ...props, overrides: overrides }));
 }
