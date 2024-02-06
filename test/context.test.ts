@@ -1,4 +1,4 @@
-import { createAbstractApplicationSync, createAbstractApplicationAsync } from '../src';
+import { createAbstractApplicationSync, Reflection } from '../src';
 
 describe('application can use context', () => {
     it('should has items in context', () => {
@@ -15,9 +15,11 @@ describe('application can use context', () => {
         app.getContext().addClass('secondService', SecondService);
 
         // when
+        const reflection = app.resolve<Reflection>('reflection');
         const result = app.resolve<SecondService>('secondService').secondTest();
 
         // then
+        expect(reflection.has('secondService')).toBeTruthy();
         expect(registerFn).toHaveBeenCalledWith('testService');
         expect(registerFn).toHaveBeenCalledWith('secondService');
         expect(registerFn).toHaveBeenCalledWith('config');

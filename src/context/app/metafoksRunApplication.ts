@@ -6,6 +6,7 @@ import { Constructor, createLogger } from '../../utils';
 import { MetafoksScanner } from '../scanner';
 import { MetafoksLoggerFactory } from '../logger';
 import { MetafoksApplicationProperties } from './metafoksApplicationProperties';
+import { Reflection } from '../reflect';
 
 export class MetafoksRunApplication {
     private static instance?: MetafoksRunApplication = undefined;
@@ -96,6 +97,8 @@ export class MetafoksRunApplication {
 
     private configureComponents() {
         this.logger.debug('started application configuration');
+        this.addReflection();
+
         const configuration = this.configurator.configure();
 
         this.loggerFactory.configure(configuration.logger);
@@ -125,5 +128,10 @@ export class MetafoksRunApplication {
             app.run();
             return;
         }
+    }
+
+    private addReflection() {
+        const has = (name: string) => this.context.has(name);
+        this.context.addValue('reflection', { has } as Reflection);
     }
 }

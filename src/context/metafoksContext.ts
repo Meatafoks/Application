@@ -12,6 +12,7 @@ import { MetafoksAppConfig } from '../config';
 import { MetafoksEvents } from './events';
 import { MetafoksContextProperties } from './conext/metafoksContextProperties';
 import { Constructor, createLogger, FunctionReturning } from '../utils';
+import { Reflection } from './reflect';
 
 /**
  * Metafoks application context
