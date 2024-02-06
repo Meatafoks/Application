@@ -2,6 +2,10 @@
 !src/
 !src/**/*
 
+!example/
+!example/**/*
+example/logs
+
 !test/
 !test/**/*
 

@@ -199,7 +199,7 @@ export class TelegramBot {
 
 export function telegramBotExtension(context: MetafoksContext) {
     context.addClass( "telegramBot", TelegramBot );
-    
+
     return {
         identifier: "telegramBotExtension"
     }
@@ -232,12 +232,10 @@ class Application {
 
 ```json
 {
-  "metafoks": {
-    "scanner": {
-      "service": "./src/**/*.service.ts",
-      "loader": "./src/**/*.loader.ts",
-      "component": "./src/**/*.component.ts"
-    }
+  "scanner": {
+    "service": "./src/**/*.service.ts",
+    "loader": "./src/**/*.loader.ts",
+    "component": "./src/**/*.component.ts"
   }
 }
 ```
@@ -248,12 +246,10 @@ class Application {
 
 ```json
 {
-  "metafoks": {
-    "logger": {
-      "level": {
-        "app": "INFO",
-        "system": "INFO"
-      }
+  "logger": {
+    "level": {
+      "app": "INFO",
+      "system": "INFO"
     }
   }
 }

@@ -1,42 +1,16 @@
-import { MetafoksContext } from '../context';
-import { applicationLoader, ApplicationLoaderProps } from '../loaders/app.loader';
+import { CreateAbstractApplicationProps } from './createAbstractApplicationProps';
+import { MetafoksRunApplication } from '../context';
 import { merge } from '../utils/merge';
-import { LoggerFactory } from '../utils';
+import { DEFAULT_PROPS_FOR_ABSTRACT_APPLICATION } from './defaults';
+import { createMainClass } from './createMainClass';
 import { MetafoksAbstractContext } from './metafoksAbstractContext';
 
-export interface CreateAbstractApplicationProps<TConfig>
-    extends Omit<ApplicationLoaderProps<TConfig>, 'componentsLoader'> {
-    mocks?: Record<string, any>;
-}
+export async function createAbstractApplication<TConfig>(
+    props: CreateAbstractApplicationProps<TConfig> = {},
+) {
+    const app = await new MetafoksRunApplication(merge<any>(DEFAULT_PROPS_FOR_ABSTRACT_APPLICATION, props))
+        .setAppMainClass(createMainClass(props.onStart))
+        .start();
 
-export function createAbstractApplication<TConfig>(props: CreateAbstractApplicationProps<TConfig> = {}) {
-    const context = new MetafoksContext();
-    applicationLoader(context, {
-        componentsLoader: { scanner: { enabled: false } },
-        logger: { level: { system: 'DEBUG', app: 'DEBUG' }, disableFileWriting: true },
-        config: merge(
-            {
-                configPath: props.config?.configPath ?? 'test/config',
-                overrides: { metafoks: { logger: { level: { system: 'trace' } } } },
-            },
-            props.config ?? {},
-        ),
-        with: [
-            context => {
-                const mocks = props.mocks ?? {};
-                const mocksKeys = Object.keys(mocks);
-                for (const key of mocksKeys) {
-                    LoggerFactory.app.debug(`mocking ${key}`);
-                    context.addValue(key, mocks[key]);
-                }
-                return { identifier: '$metafoks-testing-mock-extension' };
-            },
-            ...(props.with ?? []),
-        ],
-        events: props.events,
-    });
-
-    LoggerFactory.app.info('abstract application has been started');
-    props.events?.onStarted?.();
-    return new MetafoksAbstractContext(context);
+    return new MetafoksAbstractContext(app.context);
 }

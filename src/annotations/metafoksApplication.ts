@@ -1,8 +1,6 @@
 import { runMetafoksApplication } from '../context';
-import { ApplicationLoaderProps } from '../loaders/app.loader';
+import { Constructor } from '../utils';
 
-export function MetafoksApplication(options: ApplicationLoaderProps = {}) {
-    return (target: any) => {
-        runMetafoksApplication(target, options);
-    };
+export function MetafoksApplication<TClass>(target: Constructor<TClass>) {
+    runMetafoksApplication(target);
 }

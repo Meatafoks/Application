@@ -1,9 +1,9 @@
-import { MetafoksApplicationExtension } from './type';
+import { MetafoksExtension } from './type';
 
 /**
  * Declaring new extension
  * @param loader - extension function
  */
-export function createExtension(loader: MetafoksApplicationExtension) {
+export function createExtension(loader: MetafoksExtension) {
     return loader;
 }

@@ -1,16 +1,14 @@
-import { createAbstractApplication } from '../src';
+import { createAbstractApplicationSync, createAbstractApplicationAsync } from '../src';
 
 describe('application can use context', () => {
     it('should has items in context', () => {
         // given
 
         const registerFn = jest.fn();
-        const app = createAbstractApplication({
-            config: {
-                loaderLoggerLevel: 'trace',
-                overrides: { metafoks: { logger: { level: { system: 'debug' } } } },
+        const app = createAbstractApplicationSync({
+            events: {
+                componentRegistered: registerFn,
             },
-            events: { onComponentRegistered: registerFn },
         });
 
         app.getContext().addClass('testService', TestService);

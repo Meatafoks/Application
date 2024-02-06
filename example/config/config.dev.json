@@ -1,0 +1,15 @@
+{
+  "token": "dev",
+  "key": "hi",
+  "autorun": {
+    "disable": [
+      "ru.metafoks.extension.TestExtension1"
+    ]
+  },
+  "logger": {
+    "level": {
+      "app": "debug",
+      "system": "debug"
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import { createAbstractApplication, createExtension } from '../src';
+import { createExtension, createAbstractApplication } from '../src';
 
 const testExtension = createExtension(context => {
     const config = context.getConfig<any>();
@@ -9,7 +9,7 @@ const testExtension = createExtension(context => {
         autorun: async () => {
             console.log('done');
             if (config.value !== 1) throw new Error('no config');
-            return new Promise(resolve => setTimeout(resolve, 300));
+            return new Promise(resolve => setTimeout(resolve, 100));
         },
     };
 });
@@ -27,26 +27,29 @@ describe('extensions loader', () => {
     it('should works', async () => {
         // given
         const extensionLoadFn = jest.fn();
-        const app = createAbstractApplication({
-            with: [testExtension],
-            events: { onExtensionLoaded: extensionLoadFn },
+        await createAbstractApplication({
+            extensions: [testExtension],
+            events: { extensionLoaded: extensionLoadFn },
         });
 
         //then
-        await new Promise(resolve => setTimeout(resolve, 600));
         expect(extensionLoadFn).toHaveBeenCalledWith('test');
     });
 
     it('should print error', async () => {
-        // given
-        const extensionLoadFn = jest.fn();
-        const app = createAbstractApplication({
-            with: [badExtension],
-            events: { onExtensionLoaded: extensionLoadFn },
-        });
+        const startFn = jest.fn();
+        const exceptionFn = jest.fn();
 
-        //then
-        await new Promise(resolve => setTimeout(resolve, 600));
-        expect(extensionLoadFn).not.toHaveBeenCalledWith('test');
+        try {
+            await createAbstractApplication({
+                extensions: [badExtension],
+                onStart: startFn,
+            });
+        } catch {
+            exceptionFn();
+        }
+
+        expect(exceptionFn).toHaveBeenCalled();
+        expect(startFn).not.toHaveBeenCalled();
     });
 });

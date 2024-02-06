@@ -16,7 +16,8 @@
   "scripts": {
     "build": "tsc",
     "format": "prettier --write \"src/**/*.(js|ts)\"",
-    "lint": "eslint src --fix --ext .js,.ts"
+    "lint": "eslint src --fix --ext .js,.ts",
+    "start:example": "cd example && ts-node src/index.ts"
   },
   "author": "Yakov Foks <notafoks@yandex.ru>",
   "license": "MIT",

@@ -5,4 +5,3 @@ export * from './utils';
 export * from './config';
 export * from './testing';
 export * from './exension';
-export * from './events';

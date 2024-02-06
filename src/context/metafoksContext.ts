@@ -6,78 +6,97 @@ import {
     AwilixContainer,
     createContainer,
     InjectionMode,
+    GlobWithOptions,
 } from 'awilix';
-import { FunctionReturning } from 'awilix/lib/container';
-import { Constructor } from 'awilix/lib/resolvers';
 import { MetafoksAppConfig } from '../config';
-import { MetafoksEnvKey } from './env';
-import { ContextEventName } from '../events';
+import { MetafoksEvents } from './events';
+import { MetafoksContextProperties } from './conext/metafoksContextProperties';
+import { Constructor, createLogger, FunctionReturning } from '../utils';
 
+/**
+ * Metafoks application context
+ */
 export class MetafoksContext {
-    private static instance?: MetafoksContext = undefined;
-
-    public static getContext() {
-        if (this.instance === undefined) this.instance = new MetafoksContext();
-        return this.instance;
-    }
-
-    public static env<T = string>(name: MetafoksEnvKey, defaultValue: T): T;
-    public static env<T = string>(name: MetafoksEnvKey): T | undefined;
-    public static env<T = string>(
-        name: MetafoksEnvKey,
-        defaultValue: T | undefined = undefined,
-    ): T | undefined {
-        return (process.env[name] as T | undefined) ?? defaultValue;
-    }
+    private readonly logger = createLogger(MetafoksContext);
 
     private readonly container: AwilixContainer;
-    public readonly listeners: Partial<Record<ContextEventName, Array<(identifier: string) => void>>> = {};
-    public inlineConfig?: MetafoksAppConfig = undefined;
+    private properties: MetafoksContextProperties = {
+        disableRegistrations: [],
+    };
 
-    public constructor() {
+    public constructor(private events: MetafoksEvents) {
         this.container = createContainer({
             injectionMode: InjectionMode.PROXY,
             strict: true,
         });
     }
 
-    public on(event: ContextEventName, listener?: (identifier: string) => void) {
-        if (listener) {
-            if (!this.listeners[event]) this.listeners[event] = [];
-            this.listeners[event]?.push(listener);
-        }
-    }
-
-    public trackEvent<TArg = string>(event: ContextEventName, args: TArg) {
-        this.listeners[event]?.forEach(value => value(args as string));
+    public setContextLoggerLevel(level?: string) {
+        this.logger.level = level ?? 'info';
     }
 
     public has(name: string) {
-        return this.getContainer().hasRegistration(name);
-    }
-
-    public getContainer() {
-        return this.container;
+        return this.container.hasRegistration(name);
     }
 
     public addFunction<T>(name: string, target: FunctionReturning<T>) {
-        this.getContainer().register(name, asFunction(target).singleton());
-        this.trackEvent('componentRegistered', name);
+        if (this.properties.disableRegistrations?.includes(name))
+            return this.logger.debug(`denied registration for component=${name}`);
+
+        this.container.register(name, asFunction(target).singleton());
+        this.events.trackEvent('componentRegistered', name);
+        this.logger.debug(`registered component=${name} as loader`);
     }
 
     public addValue<T>(name: string, target: T) {
-        this.getContainer().register(name, asValue(target));
-        this.trackEvent('componentRegistered', name);
+        if (this.properties.disableRegistrations?.includes(name))
+            return this.logger.debug(`denied registration for component=${name}`);
+
+        this.container.register(name, asValue(target));
+        this.events.trackEvent('componentRegistered', name);
+        this.logger.debug(`registered component=${name} as value`);
+    }
+
+    public addMock<T>(name: string, target: T) {
+        if (!this.properties.disableRegistrations) {
+            this.properties.disableRegistrations = [];
+        }
+        this.properties.disableRegistrations.push(name);
+
+        this.container.register(name, asValue(target));
+        this.events.trackEvent('componentRegistered', name);
+        this.logger.debug(`registered mock and disabled registration for component=${name}`);
+    }
+
+    /**
+     * Removes mock from disabled registrations
+     * @param name
+     */
+    public removeMock(name: string) {
+        if (this.properties.disableRegistrations) {
+            this.properties.disableRegistrations = this.properties.disableRegistrations.filter(
+                v => v !== name,
+            );
+            this.logger.debug(`removed mock and enabled registration for component=${name}`);
+        }
     }
 
     public addAlias<T>(name: string, source: string) {
-        this.getContainer().register(name, aliasTo(source));
-        this.trackEvent('componentRegistered', name);
+        if (this.properties.disableRegistrations?.includes(name))
+            return this.logger.debug(`denied registration for component=${name}`);
+
+        this.container.register(name, aliasTo(source));
+        this.events.trackEvent('componentRegistered', name);
+        this.logger.debug(`registered alias=${name}`);
     }
 
     public addClass<T>(name: string, target: Constructor<T>) {
-        this.getContainer().register(name, asClass(target).singleton());
-        this.trackEvent('componentRegistered', name);
+        if (this.properties.disableRegistrations?.includes(name))
+            return this.logger.debug(`denied registration for component=${name}`);
+
+        this.container.register(name, asClass(target).singleton());
+        this.events.trackEvent('componentRegistered', name);
+        this.logger.debug(`registered component=${name} as object`);
     }
 
     public getConfig<T = {}>(): MetafoksAppConfig & T {
@@ -85,6 +104,24 @@ export class MetafoksContext {
     }
 
     public resolve<T = any>(name: string): T {
-        return this.getContainer().resolve(name) as T;
+        return this.container.resolve(name) as T;
+    }
+
+    public addComponentsByPath(paths: string[]) {
+        return this.container.loadModules(
+            paths.map<GlobWithOptions>(it => [it, { lifetime: 'SINGLETON', register: asClass }]),
+            {
+                formatName: 'camelCase',
+            },
+        );
+    }
+
+    public addLoadersByPath(paths: string[]) {
+        return this.container.loadModules(
+            paths.map<GlobWithOptions>(it => [it, { lifetime: 'SINGLETON', register: asFunction }]),
+            {
+                formatName: name => name.replace('.loader', ''),
+            },
+        );
     }
 }

@@ -1,23 +1,23 @@
-import { createAbstractApplication } from '../src';
-import { registerComponentsLoader } from '../src/loaders/components.loader';
+import { createAbstractApplicationSync } from '../src';
 
 describe('application scanner', () => {
     const registerFn = jest.fn();
-    const app = createAbstractApplication();
-
-    it('should scan components', () => {
-        // given
-        app.getContext().on('componentRegistered', registerFn);
-
-        // when
-        registerComponentsLoader(app.getContext(), {
+    const app = createAbstractApplicationSync({
+        config: {
             scanner: {
                 enabled: true,
                 component: './test/**/*.component.ts',
+                loader: './test/**/*.loader.ts',
             },
-        });
+        },
+        events: { componentRegistered: registerFn },
+    });
 
-        // then
+    it('should scan components', () => {
+        expect(app.getContext().has('demoComponent')).toBeTruthy();
+        expect(app.getContext().has('testlod')).toBeTruthy();
+
         expect(registerFn).toHaveBeenCalledWith('demoComponent');
+        expect(registerFn).toHaveBeenCalledWith('testlod');
     });
 });

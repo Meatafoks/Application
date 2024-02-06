@@ -16,14 +16,18 @@ export class MetafoksAbstractContext {
      */
     public mockComponentField<TComponent, TMock = any>(name: string, field: keyof TComponent, mock: TMock) {
         const component = this.resolve<TComponent>(name);
-        this.getContext().addValue(name, {
+        this.getContext().addMock(name, {
             ...component,
             [field]: mock,
         });
     }
 
+    public has(name: string) {
+        return this.getContext().has(name);
+    }
+
     public mock<TMock = any>(name: string, mock: TMock) {
-        this.getContext().addValue(name, mock);
+        this.getContext().addMock(name, mock);
     }
 
     public resolve<T = any>(name: string) {

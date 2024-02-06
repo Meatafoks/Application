@@ -1,10 +1,9 @@
-import { createAbstractApplication } from '../src';
+import { createAbstractApplicationSync } from '../src';
 
 describe('application can run', () => {
     const runFn = jest.fn();
-    const app = createAbstractApplication({
-        events: { onStarted: runFn },
-        config: { loaderLoggerLevel: 'trace' },
+    const app = createAbstractApplicationSync({
+        onStart: runFn,
     });
 
     it('should run', () => {

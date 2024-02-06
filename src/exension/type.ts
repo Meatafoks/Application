@@ -1,14 +1,20 @@
 import { MetafoksContext } from '../context';
+import { Constructor, FunctionReturning } from '../utils';
+
+export type MetafoksExtensionAutorunFn = (() => Promise<void>) | (() => void);
 
 /**
  * Extension manifest information
  */
-export type MetafoksApplicationExtensionManifest = {
+export type MetafoksExtensionManifest = {
     identifier: string;
-    autorun?: () => Promise<void>;
+    autorun?: MetafoksExtensionAutorunFn;
+
+    components?: Record<string, Constructor<any>>;
+    loaders?: Record<string, FunctionReturning<any>>;
 };
 
 /**
  * Metafoks application extension type
  */
-export type MetafoksApplicationExtension = (context: MetafoksContext) => MetafoksApplicationExtensionManifest;
+export type MetafoksExtension = (context: MetafoksContext) => MetafoksExtensionManifest;

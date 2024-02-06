@@ -1,17 +1,11 @@
-import { MetafoksContext } from './index';
-import { launchApp } from '../launchers/app.launcher';
-import { LoggerFactory } from '../utils';
-import { applicationLoader, ApplicationLoaderProps } from '../loaders/app.loader';
+import { MetafoksApplicationProperties, MetafoksRunApplication } from './app';
+import { Constructor } from '../utils';
 
-export function runMetafoksApplication(mainClass: any, options: ApplicationLoaderProps = {}) {
-    const container = MetafoksContext.getContext();
-    container.addClass('app', mainClass);
-
-    applicationLoader(container, options);
-    launchApp(container);
-
-    LoggerFactory.app.info('application did start');
-    options.events?.onStarted?.();
-
-    return container;
+export function runMetafoksApplication<TClass, TConfig>(
+    mainClass: Constructor<TClass>,
+    properties: MetafoksApplicationProperties<TConfig> = {},
+) {
+    MetafoksRunApplication.main.configure(properties);
+    MetafoksRunApplication.main.setAppMainClass(mainClass);
+    MetafoksRunApplication.main.startSync();
 }
