@@ -57,6 +57,12 @@ export class MetafoksRunApplication {
             this.loader.addExtensions(properties.extensions);
         }
 
+        if (properties.mocks) {
+            for (const mock in properties.mocks) {
+                this.context.addMock(mock, properties.mocks[mock]);
+            }
+        }
+
         return this;
     }
 
