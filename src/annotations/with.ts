@@ -27,4 +27,4 @@ export const With = Extension;
  * @param extension - extension or array of extensions to load
  * @see Extension
  */
-export const WithExtension = Extension;
+export const Extensions = Extension;

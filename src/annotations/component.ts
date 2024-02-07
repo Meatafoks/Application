@@ -6,3 +6,5 @@ export function Component(name?: string) {
         (target as any)[RESOLVER] = { name };
     });
 }
+
+export const Service = Component;
