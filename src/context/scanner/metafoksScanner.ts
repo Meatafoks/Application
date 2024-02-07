@@ -1,11 +1,9 @@
 import { MetafoksContext } from '../metafoksContext';
 import { createLogger } from '../../utils';
 import { MetafoksScannerProperties } from './metafoksScannerProperties';
-import { MetafoksEnv } from '../env/metafoksEnv';
+import { MetafoksEnv } from '../env';
 import { merge } from '../../utils/merge';
-import { GlobWithOptions } from 'awilix/lib/list-modules';
-import { asClass, asFunction } from 'awilix';
-import { MetafoksEvents } from '../events/metafoksEvents';
+import { MetafoksEvents } from '../events';
 
 export class MetafoksScanner {
     private readonly logger = createLogger(MetafoksScanner);
@@ -13,7 +11,7 @@ export class MetafoksScanner {
         enabled: true,
         service: MetafoksEnv.env('SCANNER_SERVICE_PATTERN', ['./src/**/*.service.ts']),
         component: MetafoksEnv.env('SCANNER_COMPONENT_PATTERN', ['./src/**/*.component.ts']),
-        loader: MetafoksEnv.env('SCANNER_LOADER_PATTERN', ['./src/**/*.service.ts']),
+        loader: MetafoksEnv.env('SCANNER_LOADER_PATTERN', ['./src/**/*.loader.ts']),
     };
 
     public constructor(
