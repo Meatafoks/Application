@@ -10,10 +10,13 @@ export class MetafoksEvents {
     }
 
     public on<Event extends EventType>(event: Event, listener?: EventListenerMap[Event]) {
+        if (!this.listeners[event]) this.listeners[event] = [];
+
         if (listener) {
             this.logger.debug(`subscribed event listener for event=${event}`);
-            if (!this.listeners[event]) this.listeners[event] = [];
             this.listeners[event]?.push(listener);
+        } else {
+            this.listeners[event] = undefined;
         }
     }
 

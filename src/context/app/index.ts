@@ -1,2 +1,2 @@
-export * from './metafoksRunApplication';
+export * from './metafoksContainer';
 export * from './metafoksApplicationProperties';

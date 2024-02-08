@@ -1,12 +1,17 @@
-import { createAbstractApplicationSync } from '../src';
+import { containerOf, MetafoksApplication } from '../src';
 
 describe('application can run', () => {
     const runFn = jest.fn();
-    const app = createAbstractApplicationSync({
-        onStart: runFn,
-    });
 
-    it('should run', () => {
+    @MetafoksApplication
+    class App {
+        public run() {
+            runFn();
+        }
+    }
+
+    it('should run', async () => {
+        const _ = await containerOf(App);
         expect(runFn).toHaveBeenCalledTimes(1);
     });
 });

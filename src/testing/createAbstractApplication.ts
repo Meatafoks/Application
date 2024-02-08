@@ -1,14 +1,18 @@
 import { CreateAbstractApplicationProps } from './createAbstractApplicationProps';
-import { MetafoksRunApplication } from '../context';
+import { MetafoksContainer } from '../context';
 import { merge } from '../utils/merge';
 import { DEFAULT_PROPS_FOR_ABSTRACT_APPLICATION } from './defaults';
 import { createMainClass } from './createMainClass';
 import { MetafoksAbstractContext } from './metafoksAbstractContext';
 
+/**
+ * @deprecated use @MetafoksTestingApplication instead.
+ * @param props
+ */
 export async function createAbstractApplication<TConfig>(
     props: CreateAbstractApplicationProps<TConfig> = {},
 ) {
-    const app = await new MetafoksRunApplication(merge<any>(DEFAULT_PROPS_FOR_ABSTRACT_APPLICATION, props))
+    const app = await new MetafoksContainer(merge<any>(DEFAULT_PROPS_FOR_ABSTRACT_APPLICATION, props))
         .setAppMainClass(createMainClass(props.onStart))
         .start();
 

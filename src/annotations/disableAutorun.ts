@@ -1,4 +1,4 @@
-import { MetafoksRunApplication } from '../context';
+import { MetafoksContainer } from '../context';
 import { Annotation, createAnnotation } from '../utils';
 
 function DisableAutorun(flag: boolean): Annotation;
@@ -6,7 +6,7 @@ function DisableAutorun(identifier: string): Annotation;
 function DisableAutorun(...identifiers: string[]): Annotation;
 function DisableAutorun(identifiers: string | string[] | boolean) {
     return createAnnotation(target => {
-        MetafoksRunApplication.main.configurator.configureDisableAutorun(identifiers);
+        MetafoksContainer.main.configurator.configureDisableAutorun(identifiers);
     });
 }
 

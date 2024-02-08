@@ -1,5 +1,5 @@
 import { MetafoksExtension } from '../exension';
-import { MetafoksRunApplication } from '../context';
+import { MetafoksContainer } from '../context';
 import { createAnnotation } from '../utils';
 
 /**
@@ -9,7 +9,7 @@ import { createAnnotation } from '../utils';
  */
 export function Extension(...extensions: MetafoksExtension[]) {
     return createAnnotation(target => {
-        MetafoksRunApplication.main.loader.addExtensions(extensions);
+        MetafoksContainer.main.loader.addExtensions(extensions);
     });
 }
 

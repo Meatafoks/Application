@@ -6,7 +6,7 @@ import {
     Logger,
     LoggerLevel,
     MetafoksApplication,
-    MetafoksRunApplication,
+    MetafoksContainer,
     Overrides,
 } from '../src';
 
@@ -33,7 +33,7 @@ describe('test class components', () => {
 
     @MetafoksApplication
     @Overrides({ some: 'value' })
-    @Logger({ disableFileWriting: true })
+    @Logger({ enabledFileWriting: true })
     @Extension(testExt, testAnotherExt)
     @LoggerLevel('system', 'debug')
     @LoggerLevel('app', 'debug')
@@ -49,7 +49,7 @@ describe('test class components', () => {
         // preload
         await new Promise(resolve => setTimeout(resolve, 400));
 
-        const config = MetafoksRunApplication.main.context.getConfig<any>();
+        const config = MetafoksContainer.main.context.getConfig<any>();
 
         expect(startFn).toHaveBeenCalled();
         expect(config.some).toEqual('value');

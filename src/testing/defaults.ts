@@ -8,10 +8,9 @@ export const DEFAULT_PROPS_FOR_ABSTRACT_APPLICATION: CreateAbstractApplicationPr
         logger: {
             level: {
                 app: 'debug',
-                scanner: 'debug',
                 system: 'debug',
             },
-            disableFileWriting: false,
+            enabledFileWriting: false,
         },
     },
     configPath: 'test/config',

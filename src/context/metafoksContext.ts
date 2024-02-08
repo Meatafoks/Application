@@ -12,7 +12,8 @@ import { MetafoksAppConfig } from '../config';
 import { MetafoksEvents } from './events';
 import { MetafoksContextProperties } from './conext/metafoksContextProperties';
 import { Constructor, createLogger, FunctionReturning } from '../utils';
-import { Reflection } from './reflect';
+import { contextName } from '../utils/contextName';
+import { LoggerFactoryLevel } from './logger';
 
 /**
  * Metafoks application context
@@ -21,6 +22,7 @@ export class MetafoksContext {
     private readonly logger = createLogger(MetafoksContext);
 
     private readonly container: AwilixContainer;
+
     private properties: MetafoksContextProperties = {
         disableRegistrations: [],
     };
@@ -30,9 +32,10 @@ export class MetafoksContext {
             injectionMode: InjectionMode.PROXY,
             strict: true,
         });
+        this.logger.level = 'debug';
     }
 
-    public setContextLoggerLevel(level?: string) {
+    public setContextLoggerLevel(level?: LoggerFactoryLevel) {
         this.logger.level = level ?? 'info';
     }
 

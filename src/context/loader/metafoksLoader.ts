@@ -1,7 +1,7 @@
 import { MetafoksExtension, MetafoksExtensionManifest } from '../../exension';
-import { createLogger, LoggerFactory } from '../../utils';
+import { createLogger } from '../../utils';
 import { MetafoksContext } from '../metafoksContext';
-import { MetafoksEvents } from '../events/metafoksEvents';
+import { MetafoksEvents } from '../events';
 import { MetafoksLoaderProperties } from './metafoksLoaderProperties';
 import { merge } from '../../utils/merge';
 
@@ -30,6 +30,10 @@ export class MetafoksLoader {
 
     public addExtensions(extensions: MetafoksExtension[]) {
         this.extensions.push(...extensions);
+    }
+
+    public getManifest(name: string) {
+        return this.manifests[name];
     }
 
     /**

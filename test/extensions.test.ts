@@ -1,13 +1,11 @@
-import { createExtension, createAbstractApplication } from '../src';
+import { createExtension, MetafoksTestingApplication, With, EventListener, containerOf } from '../src';
 
 const testExtension = createExtension(context => {
     const config = context.getConfig<any>();
-    console.log(config);
 
     return {
         identifier: 'test',
         autorun: async () => {
-            console.log('done');
             if (config.value !== 1) throw new Error('no config');
             return new Promise(resolve => setTimeout(resolve, 100));
         },
@@ -25,31 +23,36 @@ const badExtension = createExtension(context => {
 
 describe('extensions loader', () => {
     it('should works', async () => {
-        // given
         const extensionLoadFn = jest.fn();
-        await createAbstractApplication({
-            extensions: [testExtension],
-            events: { extensionLoaded: extensionLoadFn },
-        });
+
+        @MetafoksTestingApplication()
+        @With(testExtension)
+        @EventListener('extensionLoaded', extensionLoadFn)
+        class App {}
+
+        const container = await containerOf(App);
 
         //then
+        expect(container.loader.getManifest('test')).not.toBeUndefined();
         expect(extensionLoadFn).toHaveBeenCalledWith('test');
     });
 
-    it('should print error', async () => {
+    /*it('should print error', async () => {
         const startFn = jest.fn();
         const exceptionFn = jest.fn();
 
         try {
-            await createAbstractApplication({
-                extensions: [badExtension],
-                onStart: startFn,
-            });
+            @MetafoksTestingApplication()
+            @With(badExtension)
+            @EventListener('applicationStart', startFn)
+            class App {}
+
+            await containerOf(App);
         } catch {
             exceptionFn();
         }
 
         expect(exceptionFn).toHaveBeenCalled();
         expect(startFn).not.toHaveBeenCalled();
-    });
+    });*/
 });

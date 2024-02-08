@@ -1,6 +1,6 @@
 import { runMetafoksApplication } from '../context';
-import { Constructor } from '../utils';
+import { ApplicationConstructor } from '../utils';
 
-export function MetafoksApplication<TClass>(target: Constructor<TClass>) {
+export function MetafoksApplication<TClass>(target: ApplicationConstructor<TClass>) {
     runMetafoksApplication(target);
 }

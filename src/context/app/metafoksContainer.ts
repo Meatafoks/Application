@@ -8,15 +8,17 @@ import { MetafoksLoggerFactory } from '../logger';
 import { MetafoksApplicationProperties } from './metafoksApplicationProperties';
 import { Reflection } from '../reflect';
 
-export class MetafoksRunApplication {
-    private static instance?: MetafoksRunApplication = undefined;
+export class MetafoksContainer {
+    private static instance?: MetafoksContainer = undefined;
 
     public static get main() {
-        if (this.instance === undefined) this.instance = new MetafoksRunApplication();
+        if (this.instance === undefined) this.instance = new MetafoksContainer();
         return this.instance;
     }
 
-    private readonly logger = createLogger(MetafoksRunApplication);
+    private readonly logger = createLogger(MetafoksContainer);
+    private started = false;
+
     public readonly configurator: MetafoksConfigurator;
     public readonly context: MetafoksContext;
     public readonly events: MetafoksEvents;
@@ -72,30 +74,7 @@ export class MetafoksRunApplication {
         return this;
     }
 
-    public startSync() {
-        const configuration = this.configureComponents();
-
-        this.loader
-            .callExtensionsAutorun()
-            .then(() => this.appMainClassStart())
-            .catch(reason => {
-                this.logger.error(`error while loading autorun: ${reason}`);
-                throw reason;
-            });
-
-        return this;
-    }
-
     public async start() {
-        const configuration = this.configureComponents();
-
-        await this.loader.callExtensionsAutorun();
-        this.appMainClassStart();
-
-        return this;
-    }
-
-    private configureComponents() {
         this.logger.debug('started application configuration');
         this.addReflection();
 
@@ -110,12 +89,25 @@ export class MetafoksRunApplication {
         this.loader.configure(configuration.loader);
         this.loader.loadExtensions();
 
-        return configuration;
+        try {
+            await this.loader.callExtensionsAutorun();
+        } catch (e) {
+            this.logger.error(`error with extension autorun: ${e}`);
+            throw e;
+        }
+        this.appMainClassStart();
+
+        return this;
+    }
+
+    public isStarted() {
+        return this.started;
     }
 
     private appMainClassStart() {
         const app = this.context.resolve<{ start?: () => void; run?: () => void }>('app');
         this.events.trackEvent('applicationStart');
+        this.started = true;
 
         if (app.start) {
             this.events.trackEvent('applicationHasBeenStarted');
@@ -132,6 +124,8 @@ export class MetafoksRunApplication {
 
     private addReflection() {
         const has = (name: string) => this.context.has(name);
-        this.context.addValue('reflection', { has } as Reflection);
+        const resolve = <T>(name: string) => this.context.resolve<T>(name);
+
+        this.context.addValue('reflection', { has, resolve } as Reflection);
     }
 }

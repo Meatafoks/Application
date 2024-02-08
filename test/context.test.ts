@@ -1,22 +1,22 @@
-import { createAbstractApplicationSync, Reflection } from '../src';
+import { containerOf, EventListener, MetafoksTestingApplication, Reflection } from '../src';
 
 describe('application can use context', () => {
-    it('should has items in context', () => {
+    const registerFn = jest.fn();
+
+    @MetafoksTestingApplication()
+    @EventListener('componentRegistered', registerFn)
+    class App {}
+
+    it('should has items in context', async () => {
         // given
+        const container = await containerOf(App);
 
-        const registerFn = jest.fn();
-        const app = createAbstractApplicationSync({
-            events: {
-                componentRegistered: registerFn,
-            },
-        });
-
-        app.getContext().addClass('testService', TestService);
-        app.getContext().addClass('secondService', SecondService);
+        container.context.addClass('testService', TestService);
+        container.context.addClass('secondService', SecondService);
 
         // when
-        const reflection = app.resolve<Reflection>('reflection');
-        const result = app.resolve<SecondService>('secondService').secondTest();
+        const reflection = container.context.resolve<Reflection>('reflection');
+        const result = container.context.resolve<SecondService>('secondService').secondTest();
 
         // then
         expect(reflection.has('secondService')).toBeTruthy();

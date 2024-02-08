@@ -1,11 +1,17 @@
-import { MetafoksApplicationProperties, MetafoksRunApplication } from './app';
-import { Constructor } from '../utils';
+import { MetafoksApplicationProperties, MetafoksContainer } from './app';
+import { ApplicationConstructor, Constructor, contextName } from '../utils';
 
 export function runMetafoksApplication<TClass, TConfig>(
-    mainClass: Constructor<TClass>,
+    mainClass: ApplicationConstructor<TClass>,
     properties: MetafoksApplicationProperties<TConfig> = {},
 ) {
-    MetafoksRunApplication.main.configure(properties);
-    MetafoksRunApplication.main.setAppMainClass(mainClass);
-    MetafoksRunApplication.main.startSync();
+    mainClass[contextName] = 'app';
+    mainClass.container = MetafoksContainer.main;
+    mainClass.context = MetafoksContainer.main.context;
+
+    MetafoksContainer.main.configure(properties);
+    MetafoksContainer.main.setAppMainClass(mainClass);
+    MetafoksContainer.main.start().catch(reason => {
+        throw reason;
+    });
 }
