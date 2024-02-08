@@ -1,8 +1,9 @@
 import { MetafoksAppConfig } from '../../config';
 import { EventListenerMap } from '../events';
 import { MetafoksExtension } from '../../exension';
+import { ComponentInfo } from '../../components';
 
-export interface MetafoksApplicationProperties<TConfig = {}> {
+export interface MetafoksContainerProperties<TConfig = {}> {
     profile?: string;
     configPath?: string;
 
@@ -10,4 +11,6 @@ export interface MetafoksApplicationProperties<TConfig = {}> {
     events?: Partial<EventListenerMap>;
     mocks?: Record<string, any>;
     extensions?: MetafoksExtension[];
+
+    components?: Record<string, ComponentInfo<any>>;
 }

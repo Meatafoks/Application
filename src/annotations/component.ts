@@ -1,6 +1,6 @@
 import { RESOLVER } from 'awilix';
 import { createAnnotation } from '../utils';
-import { contextName } from '../utils/contextName';
+import { contextName } from '../utils';
 
 export function Component(name?: string) {
     return createAnnotation(target => {

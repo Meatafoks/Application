@@ -9,7 +9,7 @@ import { createAnnotation } from '../utils';
  */
 export function Extension(...extensions: MetafoksExtension[]) {
     return createAnnotation(target => {
-        MetafoksContainer.main.loader.addExtensions(extensions);
+        MetafoksContainer.main.configurator.addExtensions(extensions);
     });
 }
 

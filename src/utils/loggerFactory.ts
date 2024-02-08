@@ -1,28 +1,25 @@
-import { configure, getLogger } from 'log4js';
+import { configure, getLogger, Logger as CoreLogger } from 'log4js';
+
+export type Logger = CoreLogger;
 
 /**
  * Фабрика логирования
  */
 export class LoggerFactory {
     /**
-     * Стандартный логгер
-     */
-    public static app = getLogger('MetafoksApplication');
-
-    /**
      * Настройка логов
      */
     public static configure = configure;
 
-    public static createLogger(it: any) {
+    public static createLogger(it: any): Logger {
         return this.createLoggerByName(it.name);
     }
 
-    public static createLoggerByName(name: string) {
+    public static createLoggerByName(name: string): Logger {
         return getLogger(name);
     }
 }
 
-export function createLogger(it: any) {
+export function createLogger(it: any): Logger {
     return LoggerFactory.createLogger(it);
 }

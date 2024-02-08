@@ -23,6 +23,13 @@ export type MethodAnnotation<ReturnType = void> = (
     descriptor: PropertyDescriptor,
 ) => ReturnType;
 
+export type PropertyAnnotation<ReturnType = void> = (target: any, propertyKey: string) => ReturnType;
+export type MixedAnnotation<ReturnType = void> = (
+    target: any,
+    propertyKey: string,
+    descriptor?: PropertyDescriptor,
+) => ReturnType;
+
 export function createAnnotation<TClass, ReturnType>(
     annotation: (target: Constructor<TClass>) => ReturnType,
 ): Annotation<TClass, ReturnType> {
@@ -32,5 +39,17 @@ export function createAnnotation<TClass, ReturnType>(
 export function createMethodAnnotation<ReturnType>(
     annotation: (target: Function, propertyKey: string, descriptor: PropertyDescriptor) => ReturnType,
 ): MethodAnnotation<ReturnType> {
+    return annotation;
+}
+
+export function createPropertyAnnotation<ReturnType>(
+    annotation: (target: any, propertyKey: any) => ReturnType,
+): PropertyAnnotation<ReturnType> {
+    return annotation;
+}
+
+export function createMixedAnnotation<ReturnType>(
+    annotation: (target: any, propertyKey: any, descriptor?: PropertyDescriptor) => ReturnType,
+): MixedAnnotation<ReturnType> {
     return annotation;
 }

@@ -1,4 +1,4 @@
-import {
+import awx, {
     aliasTo,
     asClass,
     asFunction,
@@ -14,6 +14,7 @@ import { MetafoksContextProperties } from './conext/metafoksContextProperties';
 import { Constructor, createLogger, FunctionReturning } from '../utils';
 import { contextName } from '../utils/contextName';
 import { LoggerFactoryLevel } from './logger';
+import { ComponentInfo, ComponentType } from '../components';
 
 /**
  * Metafoks application context
@@ -82,6 +83,25 @@ export class MetafoksContext {
                 v => v !== name,
             );
             this.logger.debug(`removed mock and enabled registration for component=${name}`);
+        }
+    }
+
+    /**
+     * Adds component to context
+     *
+     * @param name
+     * @param component
+     */
+    public addComponent<T>(name: string, component: ComponentInfo<T>) {
+        switch (component.type) {
+            case ComponentType.component:
+                return this.addClass(name, component.component);
+            case ComponentType.loader:
+                return this.addFunction(name, component.component);
+            case ComponentType.service:
+                return this.addClass(name, component.component);
+            case ComponentType.value:
+                return this.addValue(name, component.component);
         }
     }
 

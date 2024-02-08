@@ -5,6 +5,12 @@ import { createLogger } from '../../utils';
 import { MetafoksEnv } from '../env/metafoksEnv';
 import path from 'path';
 import fs from 'fs';
+import { MetafoksContainerProperties } from '../container';
+import { EventListenerMap, EventType, MetafoksEvents } from '../events';
+import { MetafoksExtensionsLoader } from '../loader';
+import { ComponentInfo } from '../../components';
+import { MetafoksExtension } from '../../exension';
+import { Reflection } from '../reflect';
 
 /**
  * Configures metafoks application
@@ -16,7 +22,11 @@ export class MetafoksConfigurator {
     private overrides: Partial<MetafoksAppConfig> = {};
     private configPath = MetafoksEnv.env('CONFIG_PATH', 'config');
 
-    public constructor(private context: MetafoksContext) {}
+    public constructor(
+        private context: MetafoksContext,
+        private events: MetafoksEvents,
+        private extensionsLoader: MetafoksExtensionsLoader,
+    ) {}
 
     /**
      * Sets application profile
@@ -26,7 +36,7 @@ export class MetafoksConfigurator {
      *
      * @param profile - active profile or undefined
      */
-    public setProfile(profile?: string) {
+    public configureProfile(profile?: string) {
         this.profile = profile;
     }
 
@@ -66,7 +76,7 @@ export class MetafoksConfigurator {
     }
 
     /**
-     * Configure application to context
+     * Configures application to context
      *
      * 1. Loads file
      * 2. Merges configuration file with overrides
@@ -83,7 +93,79 @@ export class MetafoksConfigurator {
         this.logger.info(`loaded config with profile=${this.profile ?? 'DEFAULT'}`);
         this.logger.trace(configuration);
 
+        this.addReflectionContext();
         return configuration;
+    }
+
+    /**
+     * Configures event listeners to the application
+     * @param events
+     */
+    public addEventsSubscription(events?: Partial<EventListenerMap>) {
+        if (events) {
+            this.logger.debug('exporting events from properties to event but');
+            const eventNames = Object.keys(events);
+            for (const eventName of eventNames) {
+                this.events.on(eventName as EventType, events[eventName as EventType]);
+            }
+            this.logger.info(`exported events from properties to event but count=${eventNames.length}`);
+        }
+    }
+
+    /**
+     * Configures mocks
+     * @param mocks
+     */
+    public addMocks(mocks?: Record<string, any>) {
+        if (mocks) {
+            this.logger.debug('adding mocks from properties to context');
+            const names = Object.keys(mocks);
+            for (const name of names) {
+                this.context.addMock(name, mocks[name]);
+            }
+
+            this.logger.info(`added mocks from properties to context count=${names.length}`);
+        }
+    }
+
+    /**
+     * Configures external components
+     * @param components
+     */
+    public addExternalComponents(components?: Record<string, ComponentInfo<any>>) {
+        if (components) {
+            this.logger.debug('adding external components from properties to context');
+            const names = Object.keys(components);
+            for (const name of names) {
+                this.context.addComponent(name, components[name]);
+            }
+
+            this.logger.info(`added external components from properties to context count=${names.length}`);
+        }
+    }
+
+    /**
+     * Configures extensions to application
+     * @param extensions
+     */
+    public addExtensions(extensions?: MetafoksExtension[]) {
+        if (extensions) {
+            this.logger.debug('adding extensions to extensions loader');
+            this.extensionsLoader.add(extensions);
+
+            this.logger.info(`added extensions to extensions loader count=${extensions.length}`);
+        }
+    }
+
+    /**
+     * Includes reflection to context
+     * @private
+     */
+    private addReflectionContext() {
+        const has = (name: string) => this.context.has(name);
+        const resolve = <T>(name: string) => this.context.resolve<T>(name);
+
+        this.context.addValue('reflection', { has, resolve } as Reflection);
     }
 
     private getResolvedConfigPath() {

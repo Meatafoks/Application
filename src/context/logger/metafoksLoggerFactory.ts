@@ -1,26 +1,22 @@
-import { MetafoksLoggerFactoryProperties } from './metafoksLoggerFactoryProperties';
+import { LoggerFactoryLevel, MetafoksLoggerFactoryProperties } from './metafoksLoggerFactoryProperties';
 import { merge } from '../../utils/merge';
 import { LoggerFactory } from '../../utils';
+import { Bootloader } from '../boot';
 
-export class MetafoksLoggerFactory {
-    private properties: MetafoksLoggerFactoryProperties = {
-        level: {
-            system: 'INFO',
-            app: 'INFO',
-        },
-        enabledFileWriting: true,
-        logsPath: 'logs',
-    };
-
-    public constructor() {}
-
-    public configure(properties: Partial<MetafoksLoggerFactoryProperties> = {}) {
-        this.properties = merge(this.properties, properties);
+export class MetafoksLoggerFactory extends Bootloader<MetafoksLoggerFactoryProperties> {
+    public constructor() {
+        super({
+            level: {
+                system: 'info',
+                app: 'info',
+            },
+            enabledFileWriting: true,
+            logsPath: 'logs',
+        });
     }
 
-    public factory() {
-        const level = this.properties.level?.app ?? 'INFO';
-        LoggerFactory.app.level = level;
+    public async start() {
+        const level = this.properties.level.app ?? 'info';
 
         if (this.properties?.enabledFileWriting === false) {
             this.configureNoFileWriting(level);
@@ -29,7 +25,7 @@ export class MetafoksLoggerFactory {
         }
     }
 
-    configureNoFileWriting(level: string) {
+    configureNoFileWriting(level: LoggerFactoryLevel) {
         LoggerFactory.configure({
             appenders: {
                 out: { type: 'stdout' },
@@ -40,7 +36,7 @@ export class MetafoksLoggerFactory {
         });
     }
 
-    configureFileWriting(level: string) {
+    configureFileWriting(level: LoggerFactoryLevel) {
         LoggerFactory.configure({
             appenders: {
                 out: { type: 'stdout' },

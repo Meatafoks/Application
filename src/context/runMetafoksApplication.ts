@@ -1,9 +1,9 @@
-import { MetafoksApplicationProperties, MetafoksContainer } from './app';
+import { MetafoksContainerProperties, MetafoksContainer } from './container';
 import { ApplicationConstructor, Constructor, contextName } from '../utils';
 
 export function runMetafoksApplication<TClass, TConfig>(
     mainClass: ApplicationConstructor<TClass>,
-    properties: MetafoksApplicationProperties<TConfig> = {},
+    properties: MetafoksContainerProperties<TConfig> = {},
 ) {
     mainClass[contextName] = 'app';
     mainClass.container = MetafoksContainer.main;

@@ -1,4 +1,4 @@
-export * from './app';
+export * from './container';
 export * from './env';
 export * from './events';
 export * from './configurator';

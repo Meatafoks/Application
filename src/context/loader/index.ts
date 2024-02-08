@@ -1,2 +1,2 @@
-export * from './metafoksLoader';
+export * from './metafoksExtensionsLoader';
 export * from './metafoksLoaderProperties';

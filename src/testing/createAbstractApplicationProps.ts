@@ -1,5 +1,5 @@
-import { MetafoksApplicationProperties } from '../context';
+import { MetafoksContainerProperties } from '../context';
 
-export interface CreateAbstractApplicationProps<TConfig = {}> extends MetafoksApplicationProperties<TConfig> {
+export interface CreateAbstractApplicationProps<TConfig = {}> extends MetafoksContainerProperties<TConfig> {
     onStart?: () => void;
 }

@@ -1,11 +1,11 @@
-import { MetafoksLoader } from '../loader';
+import { MetafoksExtensionsLoader } from '../loader';
 import { MetafoksEvents, EventType } from '../events';
 import { MetafoksContext } from '../metafoksContext';
 import { MetafoksConfigurator } from '../configurator';
 import { Constructor, createLogger } from '../../utils';
 import { MetafoksScanner } from '../scanner';
 import { MetafoksLoggerFactory } from '../logger';
-import { MetafoksApplicationProperties } from './metafoksApplicationProperties';
+import { MetafoksContainerProperties } from './metafoksContainerProperties';
 import { Reflection } from '../reflect';
 
 export class MetafoksContainer {
@@ -22,27 +22,27 @@ export class MetafoksContainer {
     public readonly configurator: MetafoksConfigurator;
     public readonly context: MetafoksContext;
     public readonly events: MetafoksEvents;
-    public readonly loader: MetafoksLoader;
+    public readonly loader: MetafoksExtensionsLoader;
     public readonly scanner: MetafoksScanner;
     public readonly loggerFactory: MetafoksLoggerFactory;
 
-    public constructor(properties: MetafoksApplicationProperties = {}) {
+    public constructor(properties: MetafoksContainerProperties = {}) {
         this.events = new MetafoksEvents();
         this.context = new MetafoksContext(this.events);
+        this.loader = new MetafoksExtensionsLoader(this.context, this.events);
 
-        this.configurator = new MetafoksConfigurator(this.context);
+        this.configurator = new MetafoksConfigurator(this.context, this.events, this.loader);
         this.scanner = new MetafoksScanner(this.context, this.events);
-        this.loader = new MetafoksLoader(this.context, this.events);
 
         this.loggerFactory = new MetafoksLoggerFactory();
         this.configure(properties);
     }
 
-    public configure<TConfig = {}>(properties: Partial<MetafoksApplicationProperties<TConfig>> = {}) {
+    public configure<TConfig = {}>(properties: Partial<MetafoksContainerProperties<TConfig>> = {}) {
         this.logger.debug(`applying configuration=${JSON.stringify(properties)}`);
 
         if (properties.config) this.configurator.configureOverrides(properties.config);
-        if (properties.profile) this.configurator.setProfile(properties.profile);
+        if (properties.profile) this.configurator.configureProfile(properties.profile);
         if (properties.configPath) this.configurator.setConfigPath(properties.configPath);
 
         if (properties.config?.logger?.level?.system) {
@@ -50,21 +50,10 @@ export class MetafoksContainer {
             this.events.setEventsLoggerLevel(properties.config?.logger.level.system);
         }
 
-        if (properties.events) {
-            for (const event in properties.events) {
-                this.events.on(event as EventType, properties.events[event as EventType]);
-            }
-        }
-
-        if (properties.extensions) {
-            this.loader.addExtensions(properties.extensions);
-        }
-
-        if (properties.mocks) {
-            for (const mock in properties.mocks) {
-                this.context.addMock(mock, properties.mocks[mock]);
-            }
-        }
+        this.configurator.addEventsSubscription(properties.events);
+        this.configurator.addMocks(properties.mocks);
+        this.configurator.addExternalComponents(properties.components);
+        this.configurator.addExtensions(properties.extensions);
 
         return this;
     }
@@ -76,25 +65,17 @@ export class MetafoksContainer {
 
     public async start() {
         this.logger.debug('started application configuration');
-        this.addReflection();
-
         const configuration = this.configurator.configure();
 
         this.loggerFactory.configure(configuration.logger);
-        this.loggerFactory.factory();
+        await this.loggerFactory.start();
 
         this.scanner.configure(configuration.scanner);
-        this.scanner.scan();
+        await this.scanner.start();
 
         this.loader.configure(configuration.loader);
-        this.loader.loadExtensions();
+        await this.loader.start();
 
-        try {
-            await this.loader.callExtensionsAutorun();
-        } catch (e) {
-            this.logger.error(`error with extension autorun: ${e}`);
-            throw e;
-        }
         this.appMainClassStart();
 
         return this;
@@ -120,12 +101,5 @@ export class MetafoksContainer {
             app.run();
             return;
         }
-    }
-
-    private addReflection() {
-        const has = (name: string) => this.context.has(name);
-        const resolve = <T>(name: string) => this.context.resolve<T>(name);
-
-        this.context.addValue('reflection', { has, resolve } as Reflection);
     }
 }

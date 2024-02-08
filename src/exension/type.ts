@@ -9,7 +9,9 @@ export type MetafoksExtensionAutorunFn = (() => Promise<void>) | (() => void);
 export type MetafoksExtensionManifest = {
     identifier: string;
     autorun?: MetafoksExtensionAutorunFn;
+};
 
+export type MetafoksExtensionLoaderManifest = MetafoksExtensionManifest & {
     components?: Record<string, Constructor<any>>;
     loaders?: Record<string, FunctionReturning<any>>;
 };
@@ -17,4 +19,4 @@ export type MetafoksExtensionManifest = {
 /**
  * Metafoks application extension type
  */
-export type MetafoksExtension = (context: MetafoksContext) => MetafoksExtensionManifest;
+export type MetafoksExtension = (context: MetafoksContext) => MetafoksExtensionLoaderManifest;

@@ -1,31 +1,24 @@
 import { MetafoksContext } from '../metafoksContext';
-import { createLogger } from '../../utils';
 import { MetafoksScannerProperties } from './metafoksScannerProperties';
 import { MetafoksEnv } from '../env';
-import { merge } from '../../utils/merge';
 import { MetafoksEvents } from '../events';
+import { Bootloader } from '../boot';
 
-export class MetafoksScanner {
-    private readonly logger = createLogger(MetafoksScanner);
-    private properties: MetafoksScannerProperties = {
-        enabled: true,
-        service: MetafoksEnv.env('SCANNER_SERVICE_PATTERN', ['./src/**/*.service.ts']),
-        component: MetafoksEnv.env('SCANNER_COMPONENT_PATTERN', ['./src/**/*.component.ts']),
-        loader: MetafoksEnv.env('SCANNER_LOADER_PATTERN', ['./src/**/*.loader.ts']),
-    };
-
+export class MetafoksScanner extends Bootloader<MetafoksScannerProperties> {
     public constructor(
         private context: MetafoksContext,
         private events: MetafoksEvents,
-    ) {}
-
-    public configure(properties: Partial<MetafoksScannerProperties> = {}) {
-        this.logger.debug(`applying configuration=${JSON.stringify(properties)}`);
-        this.properties = merge(this.properties, properties);
+    ) {
+        super({
+            enabled: true,
+            service: MetafoksEnv.env('SCANNER_SERVICE_PATTERN', ['./src/**/*.service.ts']),
+            component: MetafoksEnv.env('SCANNER_COMPONENT_PATTERN', ['./src/**/*.component.ts']),
+            loader: MetafoksEnv.env('SCANNER_LOADER_PATTERN', ['./src/**/*.loader.ts']),
+        });
     }
 
-    public scan() {
-        if (this.properties.enabled === false) {
+    public async start() {
+        if (!this.properties.enabled) {
             this.logger.debug('components scanned disabled');
             return;
         }
