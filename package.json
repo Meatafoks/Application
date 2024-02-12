@@ -18,7 +18,8 @@
     "build": "tsc",
     "format": "prettier --write \"src/**/*.(js|ts)\"",
     "lint": "eslint src --fix --ext .js,.ts",
-    "start:example": "cd example && ts-node src/index.ts"
+    "start:example": "cd example && ts-node src/index.ts",
+    "deploy": "npm run test && npm run build && npm version patch && npm publish"
   },
   "author": "Yakov Foks <notafoks@yandex.ru>",
   "license": "MIT",
