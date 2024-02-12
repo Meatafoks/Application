@@ -10,3 +10,5 @@ export function Component(name?: string) {
 }
 
 export const Service = Component;
+export const Repository = Component;
+export const DAO = Component;
