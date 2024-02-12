@@ -12,7 +12,6 @@ import { MetafoksAppConfig } from '../config';
 import { MetafoksEvents } from './events';
 import { MetafoksContextProperties } from './conext/metafoksContextProperties';
 import { Constructor, createLogger, FunctionReturning } from '../utils';
-import { contextName } from '../utils/contextName';
 import { LoggerFactoryLevel } from './logger';
 import { ComponentInfo, ComponentType } from '../components';
 

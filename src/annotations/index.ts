@@ -6,4 +6,4 @@ export * from './with';
 export * from './profile';
 export * from './event';
 export * from './config';
-export * from './IncludeComponent';
+export * from './Autowire';

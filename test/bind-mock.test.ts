@@ -1,4 +1,4 @@
-import { asService, containerOf, IncludeComponent, MetafoksApplication, Mock } from '../src';
+import { asService, containerOf, Autowire, MetafoksApplication, Mock } from '../src';
 import { MockAs } from '../src';
 
 describe('testing mocks', () => {
@@ -21,7 +21,7 @@ describe('testing mocks', () => {
 
     @MetafoksApplication
     @Mock('someComponent1', { run: cmpFn1 })
-    @IncludeComponent('testService', asService(TestService))
+    @Autowire('testService', asService(TestService))
     class App {
         private value = 3;
         constructor(private deps: { testService: TestService }) {}

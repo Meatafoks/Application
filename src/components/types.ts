@@ -1,5 +1,4 @@
 import { Constructor, FunctionReturning } from '../utils';
-import awx from 'awilix';
 
 export enum ComponentType {
     service = 'service',
@@ -24,9 +23,11 @@ export function asComponent<T>(component: Constructor<T>): ComponentInfo<T> {
 export function asService<T>(component: Constructor<T>): ComponentInfo<T> {
     return { type: ComponentType.service, component };
 }
+
 export function asLoader<T>(component: FunctionReturning<T>): ComponentInfo<T> {
     return { type: ComponentType.loader, component };
 }
+
 export function asValue<T>(component: T): ComponentInfo<T> {
     return { type: ComponentType.value, component };
 }

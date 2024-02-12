@@ -11,9 +11,20 @@ export class MetafoksScanner extends Bootloader<MetafoksScannerProperties> {
     ) {
         super({
             enabled: true,
-            service: MetafoksEnv.env('SCANNER_SERVICE_PATTERN', ['./src/**/*.service.ts']),
-            component: MetafoksEnv.env('SCANNER_COMPONENT_PATTERN', ['./src/**/*.component.ts']),
-            loader: MetafoksEnv.env('SCANNER_LOADER_PATTERN', ['./src/**/*.loader.ts']),
+            service: MetafoksEnv.env('SCANNER_SERVICE_PATTERN', [
+                './src/**/*.service.ts',
+                './src/**/*Service.ts',
+            ]),
+            component: MetafoksEnv.env('SCANNER_COMPONENT_PATTERN', [
+                './src/**/*.component.ts',
+                './src/**/*.dao.ts',
+                './src/**/*Component.ts',
+                './src/**/*DAO.ts',
+            ]),
+            loader: MetafoksEnv.env('SCANNER_LOADER_PATTERN', [
+                './src/**/*.loader.ts',
+                './src/**/*Loader.ts',
+            ]),
         });
     }
 
