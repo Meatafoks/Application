@@ -1,55 +1,11 @@
-import { MetafoksContainer, MetafoksContext } from '../context';
-
-import { contextName } from './contextName';
-
-export type Constructor<T> = {
-    new (...args: any[]): T;
-    [contextName]?: string;
-    context?: MetafoksContext;
-};
-export type ApplicationConstructor<T> = {
-    new (...args: any[]): T;
-    [contextName]?: string;
-    context?: MetafoksContext;
-    container?: MetafoksContainer;
-};
+import { ComponentConstructor } from '../Stereotypes';
 
 export type FunctionReturning<T> = (...args: Array<any>) => T;
 
-export type Annotation<TClass = any, ReturnType = void> = (target: Constructor<TClass>) => ReturnType;
-export type MethodAnnotation<ReturnType = void> = (
-    target: any,
-    propertyKey: string,
-    descriptor: PropertyDescriptor,
-) => ReturnType;
-
-export type PropertyAnnotation<ReturnType = void> = (target: any, propertyKey: string) => ReturnType;
-export type MixedAnnotation<ReturnType = void> = (
-    target: any,
-    propertyKey: string,
-    descriptor?: PropertyDescriptor,
-) => ReturnType;
-
-export function createAnnotation<TClass, ReturnType>(
-    annotation: (target: Constructor<TClass>) => ReturnType,
-): Annotation<TClass, ReturnType> {
-    return annotation;
+export function isConstructor<T>(obj: any): obj is ComponentConstructor<T> {
+    return typeof obj === 'function' && /^\s*class\s+/.test(obj.toString());
 }
 
-export function createMethodAnnotation<ReturnType>(
-    annotation: (target: Function, propertyKey: string, descriptor: PropertyDescriptor) => ReturnType,
-): MethodAnnotation<ReturnType> {
-    return annotation;
-}
-
-export function createPropertyAnnotation<ReturnType>(
-    annotation: (target: any, propertyKey: any) => ReturnType,
-): PropertyAnnotation<ReturnType> {
-    return annotation;
-}
-
-export function createMixedAnnotation<ReturnType>(
-    annotation: (target: any, propertyKey: any, descriptor?: PropertyDescriptor) => ReturnType,
-): MixedAnnotation<ReturnType> {
-    return annotation;
+export function isFunctionReturning<T>(obj: any): obj is FunctionReturning<T> {
+    return typeof obj === 'function' && !/^\s*class\s+/.test(obj.toString());
 }

@@ -1,22 +1,20 @@
-import { containerOf, EventListener, MetafoksTestingApplication } from '../src';
+import { ComponentsScanProperties, EventListener, Extend, runMetafoksApplication } from '../src';
+import { AbstractApplication } from './AbstractApplication';
 
 describe('application scanner', () => {
     const registerFn = jest.fn();
 
-    @MetafoksTestingApplication({
-        config: {
-            scanner: {
-                enabled: true,
-                component: './test/**/*.component.ts',
-                loader: './test/**/*.loader.ts',
-            },
-        },
+    @ComponentsScanProperties({
+        enabled: true,
+        componentsGlob: './test/**/*.component.ts',
+        loadersGlob: './test/**/*.loader.ts',
     })
     @EventListener('componentRegistered', registerFn)
+    @Extend(AbstractApplication)
     class App {}
 
     it('should scan components', async () => {
-        const container = await containerOf(App);
+        const container = await runMetafoksApplication(App);
 
         expect(container.context.has('demoComponent')).toBeTruthy();
         expect(container.context.has('testlod')).toBeTruthy();

@@ -1,13 +1,13 @@
 // import would be from @metafoks/app
-import { createLogger, MetafoksApplication } from '../../../src';
+import { MetafoksApplication, createLogger } from '../../../src';
 
 interface Config {
     hello: string;
 }
 
 @MetafoksApplication
-export class Application {
-    private readonly logger = createLogger(Application);
+export class App {
+    private readonly logger = createLogger(MetafoksApplication);
 
     public constructor(private deps: { config: Config }) {}
 

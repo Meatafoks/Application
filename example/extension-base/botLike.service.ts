@@ -1,8 +1,9 @@
 // import would be from @metafoks/app
-import { createLogger } from '../../src';
+import { createLogger, Service } from '../../src';
 
 import { BotLikeConfig } from './config';
 
+@Service('botLikeService')
 export class BotLikeService {
     private readonly logger = createLogger(BotLikeService);
     public constructor(private deps: { config: BotLikeConfig }) {}

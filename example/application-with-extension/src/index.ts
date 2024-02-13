@@ -10,8 +10,8 @@ import { botLikeExtension, BotLikeService } from '../../extension-base';
  */
 @MetafoksApplication
 @With(botLikeExtension)
-export class Application {
-    private readonly logger = createLogger(Application);
+export class App {
+    private readonly logger = createLogger(App);
 
     public constructor(private deps: { botLikeService: BotLikeService }) {}
 
